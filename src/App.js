@@ -8,17 +8,28 @@ export const App = () => {
   const [hasError, setHasError] = React.useState(false)
 
   React.useEffect(() => {
+    fetchUsers()
+  }, [])
+
+  const fetchUsers = () => {
     setIsLoading(true)
     fetch(URL)
       .then((r) => r.json())
       .then((responseData) => setData(responseData.results))
       .catch((error) => setHasError(error))
       .finally(() => setIsLoading(false))
-  }, [])
+  }
 
   return (
-    <ul>
-      {
+    <>
+      <button
+        disabled={isLoading}
+        onClick={fetchUsers}
+      >
+        FETCH
+      </button>
+      <ul>
+        {
        hasError ?
          'Error!'
          :
@@ -36,7 +47,8 @@ export const App = () => {
                  )
                })
       }
-    </ul>
+      </ul>
+    </>
   )
 }
 
