@@ -1,6 +1,9 @@
 import React from 'react'
 
 const URL = 'https://randomuser.me/api?results=10'
+let renderCount = 0
+
+window.fetchUserFunctions = []
 
 export const App = () => {
   const [data, setData] = React.useState(null)
@@ -11,6 +14,11 @@ export const App = () => {
     fetchUsers()
   }, [])
 
+  React.useEffect(() => {
+    console.log('RENDER NUMER ' + renderCount)
+    renderCount = renderCount + 1
+  })
+
   const fetchUsers = () => {
     setIsLoading(true)
     fetch(URL)
@@ -19,6 +27,8 @@ export const App = () => {
       .catch((error) => setHasError(error))
       .finally(() => setIsLoading(false))
   }
+
+  window.fetchUserFunctions[renderCount] = fetchUsers
 
   return (
     <>
