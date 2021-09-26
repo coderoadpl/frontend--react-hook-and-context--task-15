@@ -1,4 +1,5 @@
 import React from 'react'
+import { useAsyncFn } from './useAsyncFn'
 
 const URL = 'https://randomuser.me/api?results=10'
 let renderCount = 0
@@ -6,9 +7,13 @@ let renderCount = 0
 window.fetchUserFunctions = []
 
 export const App = () => {
-  const [data, setData] = React.useState(null)
-  const [isLoading, setIsLoading] = React.useState(true)
-  const [hasError, setHasError] = React.useState(false)
+  const loadUsers = React.useCallback(async () => {
+    const r = await fetch(URL)
+    const responseData = await r.json()
+    return responseData.results
+  }, [])
+
+  const [fetchState, fetchUsers] = useAsyncFn(loadUsers, [loadUsers])
 
   React.useEffect(() => {
     fetchUsers()
@@ -21,45 +26,28 @@ export const App = () => {
     renderCount = renderCount + 1
   })
 
-  const loadUsers = React.useCallback(async () => {
-    const r = await fetch(URL)
-    const responseData = await r.json()
-    setData(responseData.results)
-  }, [])
-
-  const fetchUsers = React.useCallback(async () => {
-    setIsLoading(true)
-    try {
-      await loadUsers()
-    } catch (error) {
-      setHasError(error)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [loadUsers])
-
   window.fetchUserFunctions[renderCount] = fetchUsers
 
   return (
     <>
       <button
-        disabled={isLoading}
+        disabled={fetchState.isLoading}
         onClick={fetchUsers}
       >
         FETCH
       </button>
       <ul>
         {
-       hasError ?
+       fetchState.hasError ?
          'Error!'
          :
-         isLoading ?
+         fetchState.isLoading ?
            'Loading'
            :
-             !Array.isArray(data) ?
+             !Array.isArray(fetchState.data) ?
                'No data'
                :
-               data.map((user) => {
+               fetchState.data.map((user) => {
                  return (
                    <li key={user.email}>
                      {user.email}
