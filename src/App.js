@@ -1,5 +1,5 @@
 import React from 'react'
-import { useAsyncFn } from './useAsyncFn'
+import { useAsyncFn } from 'react-use'
 
 const URL = 'https://randomuser.me/api?results=10'
 
