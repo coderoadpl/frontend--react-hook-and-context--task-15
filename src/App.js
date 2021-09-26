@@ -2,18 +2,13 @@ import React from 'react'
 import { useAsyncFn } from './useAsyncFn'
 
 const URL = 'https://randomuser.me/api?results=10'
-let renderCount = 0
-
-window.fetchUserFunctions = []
 
 export const App = () => {
-  const loadUsers = React.useCallback(async () => {
+  const [{ value, loading, error }, fetchUsers] = useAsyncFn(async () => {
     const r = await fetch(URL)
     const responseData = await r.json()
     return responseData.results
   }, [])
-
-  const [fetchState, fetchUsers] = useAsyncFn(loadUsers, [loadUsers])
 
   React.useEffect(() => {
     fetchUsers()
@@ -21,33 +16,26 @@ export const App = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  React.useEffect(() => {
-    console.log('RENDER NUMER ' + renderCount)
-    renderCount = renderCount + 1
-  })
-
-  window.fetchUserFunctions[renderCount] = fetchUsers
-
   return (
     <>
       <button
-        disabled={fetchState.isLoading}
+        disabled={loading}
         onClick={fetchUsers}
       >
         FETCH
       </button>
       <ul>
         {
-       fetchState.hasError ?
+       error ?
          'Error!'
          :
-         fetchState.isLoading ?
+         loading ?
            'Loading'
            :
-             !Array.isArray(fetchState.data) ?
+             !Array.isArray(value) ?
                'No data'
                :
-               fetchState.data.map((user) => {
+               value.map((user) => {
                  return (
                    <li key={user.email}>
                      {user.email}

@@ -1,27 +1,28 @@
 import React from 'react'
 
 export const useAsyncFn = (fn, deps) => {
-  const [data, setData] = React.useState(null)
-  const [isLoading, setIsLoading] = React.useState(true)
-  const [hasError, setHasError] = React.useState(false)
+  const [value, setValue] = React.useState(null)
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState(false)
 
   const runAsyncFn = React.useCallback(async () => {
-    setIsLoading(true)
+    setLoading(true)
     try {
       const response = await fn()
-      setData(response)
+      setValue(response)
     } catch (error) {
-      setHasError(error)
+      setError(error)
     } finally {
-      setIsLoading(false)
+      setLoading(false)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 
   return [
     {
-      data,
-      isLoading,
-      hasError
+      value,
+      loading,
+      error
     },
     runAsyncFn
   ]
