@@ -12,6 +12,8 @@ export const App = () => {
 
   React.useEffect(() => {
     fetchUsers()
+  // mount only
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   React.useEffect(() => {
@@ -19,14 +21,14 @@ export const App = () => {
     renderCount = renderCount + 1
   })
 
-  const fetchUsers = () => {
+  const fetchUsers = React.useCallback(() => {
     setIsLoading(true)
     fetch(URL)
       .then((r) => r.json())
       .then((responseData) => setData(responseData.results))
       .catch((error) => setHasError(error))
       .finally(() => setIsLoading(false))
-  }
+  }, [])
 
   window.fetchUserFunctions[renderCount] = fetchUsers
 
