@@ -21,18 +21,22 @@ export const App = () => {
     renderCount = renderCount + 1
   })
 
+  const loadUsers = React.useCallback(async () => {
+    const r = await fetch(URL)
+    const responseData = await r.json()
+    setData(responseData.results)
+  }, [])
+
   const fetchUsers = React.useCallback(async () => {
     setIsLoading(true)
     try {
-      const r = await fetch(URL)
-      const responseData = await r.json()
-      setData(responseData.results)
+      await loadUsers()
     } catch (error) {
       setHasError(error)
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [loadUsers])
 
   window.fetchUserFunctions[renderCount] = fetchUsers
 
