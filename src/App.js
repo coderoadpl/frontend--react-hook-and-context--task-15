@@ -19,9 +19,12 @@ export const App = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const filteredUsers = Array.isArray(users) && users.filter((user) => {
-    return user.email.includes(searchPhrase)
-  })
+  const filteredUsers = React.useMemo(() => {
+    return Array.isArray(users) && users.filter((user) => {
+      console.log('FILTER')
+      return user.email.includes(searchPhrase)
+    })
+  }, [searchPhrase, users])
 
   console.log('RENDER')
 
