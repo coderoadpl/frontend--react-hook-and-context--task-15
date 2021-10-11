@@ -5,6 +5,7 @@ const URL = 'https://randomuser.me/api?results=10'
 
 export const App = () => {
   const [searchPhrase, setSearchPhrase] = React.useState('')
+  const [checked, setChecked] = React.useState(false)
 
   const [{ value: users, loading, error }, fetchUsers] = useAsyncFn(async () => {
     const r = await fetch(URL)
@@ -22,6 +23,8 @@ export const App = () => {
     return user.email.includes(searchPhrase)
   })
 
+  console.log('RENDER')
+
   return (
     <>
       <button
@@ -34,6 +37,15 @@ export const App = () => {
         value={searchPhrase}
         onChange={(e) => setSearchPhrase(e.target.value)}
       />
+      <label>
+
+        <input
+          type={'checkbox'}
+          checked={checked}
+          onChange={(e) => setChecked(e.target.checked)}
+        />
+        Random checkbox (irrelevant but causing renders)
+      </label>
       <ul>
         {
        error ?
