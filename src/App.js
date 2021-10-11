@@ -4,7 +4,9 @@ import { useAsyncFn } from 'react-use'
 const URL = 'https://randomuser.me/api?results=10'
 
 export const App = () => {
-  const [{ value, loading, error }, fetchUsers] = useAsyncFn(async () => {
+  const [searchPhrase, setSearchPhrase] = React.useState('')
+
+  const [{ value: users, loading, error }, fetchUsers] = useAsyncFn(async () => {
     const r = await fetch(URL)
     const responseData = await r.json()
     return responseData.results
@@ -16,6 +18,10 @@ export const App = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const filteredUsers = Array.isArray(users) && users.filter((user) => {
+    return user.email.includes(searchPhrase)
+  })
+
   return (
     <>
       <button
@@ -24,6 +30,10 @@ export const App = () => {
       >
         FETCH
       </button>
+      <input
+        value={searchPhrase}
+        onChange={(e) => setSearchPhrase(e.target.value)}
+      />
       <ul>
         {
        error ?
@@ -32,10 +42,10 @@ export const App = () => {
          loading ?
            'Loading'
            :
-             !Array.isArray(value) ?
+             !Array.isArray(users) ?
                'No data'
                :
-               value.map((user) => {
+               filteredUsers.map((user) => {
                  return (
                    <li key={user.email}>
                      {user.email}
